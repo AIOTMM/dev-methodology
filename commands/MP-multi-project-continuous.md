@@ -1,7 +1,8 @@
 # /MP — Multi-project continuous build until ALL items done
 
 > **Replaces user's verbose**: "直到精細邏輯嚴謹開發 , merge , deploy
-> 完所有 <project> projects & all items"
+> 完所有 <multi-product-name> projects & all items"
+> (e.g. AIOTMM/AIOT-MVP, acme/platform, your-org/q3-release)
 >
 > Wraps `/sprint-kickoff` → `/A1` → `/A2` / `/A3` in a loop that spans
 > MULTIPLE projects (e.g. AIOT-MVP frontend + backend + infra simultaneously).
@@ -87,7 +88,10 @@ bash tools/verify_alignment.sh
 
 # Verify Project board (cross-repo)
 gh project item-list <PROJ_NUMBER> --owner $OWNER --format json | \
-  python3 tools/count_by_state.py
+  python3 -c "import json,sys;d=json.load(sys.stdin);
+from collections import Counter
+c=Counter(i.get('status','?') for i in d['items'])
+for k,v in sorted(c.items()): print(f'{k:>16}: {v}')"
 ```
 
 ## Halt conditions (any one stops /MP)

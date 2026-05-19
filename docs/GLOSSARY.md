@@ -73,6 +73,20 @@ These domain terms appear in `examples/sprint-P-walkthrough.md` and
 methodology to a non-trading project, substitute domain-equivalent terms
 in your own CLAUDE.md / spec files.
 
+## v1.2 additions (priority-scoring + SaaS walkthrough)
+
+- **reward_cap**: project-specific normalization baseline used in EV scoring.
+  Trading: sprint PnL upper bound. SaaS: ARR delta from feature. Internal:
+  engineering hours saved. See `docs/patterns/priority-scoring.md` §"Adapting"
+- **dependency_score**: 4th factor of priority formula, 0.0-1.0 based on
+  how many other items unblock when this one closes
+- **`[SAAS-EXAMPLE]` / `[HYPOTHETICAL]`**: marker indicating non-validated
+  illustrative content (vs real precedent extracts)
+- **`# BLOAT-OK: <reason>`**: comment marker at top of a file that
+  legitimately exceeds soft bloat limit (per CLAUDE.md bloat budgets)
+- **PROJECT-IMPLEMENTED**: marker for files/scripts the methodology
+  references but does NOT ship — each project authors its own per template
+
 ## When unsure
 
 If a term isn't here, search:

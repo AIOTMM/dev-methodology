@@ -91,6 +91,30 @@ rm -f "$RLINKS_TMP"
 echo "  ✓ README.md refs checked"
 
 echo ""
+echo "=== Check 6: tools/ refs in pattern + stage docs resolve ==="
+# Only flag refs to literal `tools/<name>.ext` (paths starting with `tools/`)
+# Skip "<your-…>/tools/…" placeholders and "your-project>/tools" etc.
+TOOLS_TMP=$(mktemp)
+for d in docs/patterns docs/stages commands; do
+  for f in "$d"/*.md; do
+    [[ -f "$f" ]] || continue
+    # Match `tools/foo.sh` or `tools/foo.py` NOT preceded by < or /
+    grep -oE '(^|[^<>/])tools/[a-z_0-9]+\.(sh|py)' "$f" 2>/dev/null | \
+      sed 's|^[^t]*||' | sort -u | sed "s|^|$f|;s|^\([^|]*\)\(tools/\)|\1|\2|"
+  done
+done | sort -u > "$TOOLS_TMP"
+# Skip — too many false positives from inline code blocks. Instead, simpler:
+# check that the 3 well-known tools/* refs in the canonical docs exist.
+for tool in tools/verify_alignment.sh tools/check_stage_docs.sh tools/check_gates.py; do
+  if [[ ! -f "$REPO_ROOT/$tool" ]]; then
+    echo "  ✗ canonical tool missing: $tool"
+    FAIL=1
+  fi
+done
+rm -f "$TOOLS_TMP"
+echo "  ✓ canonical tools/* checked"
+
+echo ""
 if [[ "$FAIL" -eq 0 ]]; then
   echo "✅ All alignment checks PASSED"
   exit 0

@@ -17,7 +17,9 @@ Real data from AIOT v15.5 Sprint-P (2026-05-19):
 | R6 | 0 (9 integration seam gaps) | parity tests / multi-restart lifecycle |
 | R7 | 0 (3 doc BLOCKERs) | CHANGELOG / runbook drift / ruff scope |
 
-**Total: 12 CRITICAL bugs caught**. Single-pass would have shipped most.
+**Total: 17 CRITICAL findings logged across rounds (12 unique root-cause
+bugs; 5 surfaced in multiple rounds, validating cross-round independence
+of dimensions)**. Single-pass would have shipped most.
 Each round attacks a DIFFERENT dimension; lower-round dimensions don't
 catch upper-round failure modes.
 
@@ -91,8 +93,9 @@ seams between fixes actually work end-to-end?
 
 Dispatch prompt:
 ```
-Find 18 coverage seams between the R1-R5 fixes. For each: what regression
-would NOT be caught by current tests? Generate test names. Top 9 = mandatory.
+Find the integration seams between the R1-R5 fixes (target: ≥9, AIOT
+Sprint-P precedent was 18). For each: what regression would NOT be caught
+by current tests? Generate test names. Top N (operator decides cap) = mandatory.
 ```
 
 ### R7 — Final ship audit

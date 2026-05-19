@@ -91,8 +91,11 @@ for f in $FIXTURES; do
   [ -f "$f" ] || echo "MISSING: $f"
 done
 
-# Synthetic data generation tools work?
-python3 tools/generate_test_fixtures.py --dry-run
+# Synthetic data generation tools work (project-implemented, not upstream)?
+# Substitute your project's actual fixture-gen tool, e.g.:
+#   python3 scripts/gen_fixtures.py --dry-run
+#   make fixtures-dry-run
+#   pytest --collect-only tests/fixtures/
 ```
 
 ### 6. Operator availability + state

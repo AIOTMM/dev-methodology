@@ -241,7 +241,9 @@ updated AND remote checks pass.
 
 ## Default conventions (when project CLAUDE.md doesn't override)
 
-- Word cap per sub-agent round: 1500-3000 words (see `docs/patterns/adversarial-review-7-rounds.md`)
+- Word cap per sub-agent round: per-round in `docs/patterns/adversarial-review-7-rounds.md`
+  (R1=1500 / R2=2000 / R3=2500 / R4=3000 / R5=3000 / R6=2500 / R7=2000)
+- Word cap per /A1 single-step review (narrower scope): 800 words
 - Conventional commits: `feat:` / `fix:` / `refactor:` / `test:` / `docs:` / `chore:`
 - Test runner placeholder `<test_runner>`: substitute per `PREREQUISITES.md`
 - Production-host placeholder: `<prod-host>` — your EC2 / cloud / staging

@@ -51,11 +51,15 @@ every deploy.
 # - No record
 # - Drift possible
 
-# CORRECT: scripted gate
-bash tools/gate-G2-stage-zero.sh && \
+# CORRECT: scripted gate (project-implemented per S7 G2)
+bash <your-project>/scripts/gate-G2-stage-zero.sh && \
   git tag -a v$VER-rc$N -m "..." && \
   git push origin v$VER-rc$N
 ```
+
+Real precedent: AIOT v15.5 used `bash tools/v15.5-stage-0-verify.sh` —
+naming + path are project-specific; the IDEA of scripted-not-implicit
+is what transfers.
 
 ## Multi-feature sequential flip
 

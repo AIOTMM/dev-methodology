@@ -100,14 +100,17 @@ Acceptance:
 Monitor production-equivalent environment for 24h continuous:
 
 ```bash
-# Continuous monitor (cron + stamp file pattern)
-bash tools/soak_monitor.sh --watch 300 --hours 24
-# Expected: 5 checks GREEN every poll
-#   1. Critical-invariants gate
+# Continuous monitor (cron + stamp-file pattern)
+# This script is PROJECT-IMPLEMENTED. Reference structure below.
+# Real precedent: AIOT v15.5 used tools/v15_phase1_soak_monitor.sh in
+# AIOTMM/agent-5.2-binance-perp; structure was 5-check poll loop hitting:
+#   1. Critical-invariants gate (HFV-EQUIV)
 #   2. Test suite green
 #   3. Working tree clean
-#   4. Commit hash unchanged
-#   5. Resource health green
+#   4. Commit hash unchanged since soak start
+#   5. Resource health green (daemons / API status)
+bash <your-soak-monitor> --watch 300 --hours 24
+# Expected: 5 checks GREEN every poll
 ```
 
 Acceptance:
