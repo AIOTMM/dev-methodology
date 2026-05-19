@@ -79,6 +79,43 @@ Match cognitive demand to zone (`docs/patterns/priority-scoring.md` §energy).
 (Codex / Gemini / Claude) when stakes warrant. Per vinsai_AI brainstorm:
 "引入其他的 LLM 來避免陷入樂觀、幻覺".
 
+## AP-14 — Vibecoding (NL prompts without ratchet)
+
+**Symptom**: AI-assisted dev with natural-language prompts only, no
+per-cycle test/doc/eval artifacts. Quality regresses silently; bugs
+surface only when users report.
+**Catch**: any sprint commit without "+N tests" line, or coverage decreases
+without operator-typed acceptance.
+**Fix**: per `docs/patterns/complexity-ratchet.md`, every cycle adds
+tests + docs + evals. Coverage CI gate forbids regression.
+
+## AP-15 — Markdown wall-of-text for substantive analyses
+
+**Symptom**: 50-line markdown report nobody re-reads; structure lost in
+flat prose.
+**Catch**: report-tier output (analysis, retro, review) generated as
+`.md` only with no structural commitment.
+**Fix**: per `docs/patterns/structure-as-html.md`, anything with
+re-read + structure triggers HTML output (Level 2+).
+
+## AP-16 — Prompt outsourced to framework
+
+**Symptom**: LangChain / LlamaIndex / framework hides actual prompt;
+debugging by reverse-engineering template internals.
+**Catch**: cannot show the exact tokens sent to LLM during last call.
+**Fix**: per `docs/patterns/twelve-factor-agents.md` Factor 2, prompts
+versioned in git as code, every character visible.
+
+## AP-17 — Agent monolith (>10 tools in one agent)
+
+**Symptom**: one "universal assistant" agent with 20+ tools, context
+window > 50% utilization, frequently loses focus mid-task.
+**Catch**: agent definition has more than 10 tools OR median task takes
+> 20 steps.
+**Fix**: per `docs/patterns/twelve-factor-agents.md` Factor 10, split
+into micro-agents (≤ 10 tools, ≤ 10 steps median) + deterministic
+orchestrator.
+
 ## AP-13 — Frozen formula never re-calibrated
 
 **Symptom**: priority scoring weights (0.35/0.25/0.25/0.15) set in week 1,

@@ -39,6 +39,14 @@ commands (`commands/`) you can copy-paste into Claude Code / Cursor / Codex.
 - ✅ Sprints where regression cost > development cost
 - ✅ Operator-in-the-loop systems (financial / safety-critical / multi-tenant)
 
+## Foundational patterns (3 imported pillars, v1.3)
+
+The 7-stage waterfall is extended with these cross-cutting engineering patterns:
+
+- **[12-Factor Agents](docs/patterns/twelve-factor-agents.md)** (Dex Horthy 2025) — production-grade LLM stack engineering
+- **[Complexity Ratchet](docs/patterns/complexity-ratchet.md)** (Garry Tan 2026) — quality compounds via per-cycle tests + docs + evals
+- **[Structure-as-HTML](docs/patterns/structure-as-html.md)** (Karpathy 2025) — presentation layer for substantive outputs
+
 ## When NOT to use this
 
 - ❌ Single-file scripts (< 200 lines total project)

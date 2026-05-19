@@ -151,6 +151,34 @@ If after R7 the code still feels wrong:
 - OR an unstated requirement (return to S3 brainstorm)
 - NEVER add R8 unless it's a new dimension (not "more of R5")
 
+## Coverage + mutation gate (v1.3 ratchet integration)
+
+In addition to round-by-round adversarial findings, S6 enforces:
+
+- **Aggregate-weighted coverage**:
+  - Payment / financial paths: 95-100%
+  - Core business logic: 90-95%
+  - Backend integration: 85-90%
+  - UI: 70-85%
+  - Aggregate ≥ 90%
+- **Mutation score ≥ 75%** on critical paths
+- **All 10 testing anti-patterns absent** (per `docs/patterns/complexity-ratchet.md`)
+- **6 test types represented** in proportion: 70% unit / 20% integration /
+  5% E2E / 3% property / mutation as meta-layer / 1% fuzz+snapshot
+
+R5 (persistence) and R6 (integration seams) particularly enforce these.
+
+## R7 ship audit format (v1.3 HTML integration)
+
+R7 final ship audit reports should output as HTML (Level 3 with severity
+color-coding) per `docs/patterns/structure-as-html.md`. Markdown still OK
+but HTML is preferred for:
+
+- Severity-tiered findings (red CRITICAL / yellow HIGH / green PASS)
+- Sticky TOC for navigation across all 7 rounds
+- Collapsible `<details>` for round-by-round drill-down
+- Operator review time drops ~60% vs markdown wall-of-text
+
 ## Sub-agent quality discipline
 
 After each round:

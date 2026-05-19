@@ -157,6 +157,37 @@ Sub-agent's summary describes what it INTENDED to do, not necessarily what
 it DID. Always verify with `git diff` / `cat` / `grep` after a sub-agent
 edits files.
 
+## Cross-cutting patterns (v1.3 imports)
+
+S5 implementation must honor 3 cross-cutting patterns:
+
+### Complexity Ratchet (`docs/patterns/complexity-ratchet.md`)
+
+Every commit adds 3 forward-only artifacts:
+
+- **Tests** (unit + integration + appropriate type per matrix)
+- **Documentation** (WHY behind decisions, not WHAT)
+- **Eval records** (quality threshold quantified vs previous baseline)
+
+Coverage CI gate: diff coverage cannot decrease without operator override.
+Mutation score ≥ 75% on critical paths.
+
+### 12-Factor Agents (`docs/patterns/twelve-factor-agents.md`)
+
+When S5 involves writing LLM-integrated code (agents, prompts, structured
+outputs), honor:
+
+- Factor 2 (Own prompts) — prompts in git, never framework-hidden
+- Factor 3 (Own context) — custom XML structure beats default message format
+- Factor 8 (Own control flow) — switch + for-loop in your code, not framework
+- Factor 10 (Small focused) — ≤ 10 tools per agent, ≤ 10 steps median
+- Factor 12 (Stateless reducer) — `agent: Thread → Event`, state in thread
+
+### Structure-as-HTML (`docs/patterns/structure-as-html.md`)
+
+If S5 ships analysis tools / reports / dashboards, output should be HTML
+(Level 2-3) by default. Markdown only for git-diffable specs.
+
 ## Real precedent
 
 AIOT v15.5 Pyramid F-PYR-02 fix used this protocol:

@@ -73,6 +73,29 @@ These domain terms appear in `examples/sprint-P-walkthrough.md` and
 methodology to a non-trading project, substitute domain-equivalent terms
 in your own CLAUDE.md / spec files.
 
+## v1.3 additions (3 imported patterns: HTML / Ratchet / 12-Factor)
+
+- **Structure-as-HTML output**: Karpathy's "HTML is the current-feasible
+  presentation layer for LLM output." 4-level prompt refinement, 7 use
+  cases, 8 anti-patterns. See `docs/patterns/structure-as-html.md`.
+- **Complexity Ratchet**: Garry Tan's "quality-only-up" mechanism via
+  per-cycle tests + docs + evals. 90% coverage threshold, aggregate-weighted.
+  See `docs/patterns/complexity-ratchet.md`.
+- **12-Factor Agents**: Dex Horthy's "deterministic software with embedded
+  LLM steps" — 12 factors + Factor 13 pre-fetch. See
+  `docs/patterns/twelve-factor-agents.md`.
+- **Verification bottleneck**: post-2025 software constraint — production
+  speed solved by AI, verification is now the bottleneck. See
+  `complexity-ratchet.md`.
+- **6 test types**: unit / integration / E2E / property-based / mutation /
+  fuzz+snapshot. Mutation score ≥ 75% = suite isn't self-deceiving.
+- **Output Engineering**: nascent discipline focused on how LLM results are
+  presented (vs prompt engineering = how generated). Karpathy chapter 07.
+- **Vibecoding**: natural-language-only prompts without ratchet/discipline;
+  fails predictably at moderate complexity. Anti-pattern (AP-14).
+- **`agent: Thread → Event`**: Factor 12 stateless-reducer signature.
+  Agent itself holds no state.
+
 ## v1.2 additions (priority-scoring + SaaS walkthrough)
 
 - **reward_cap**: project-specific normalization baseline used in EV scoring.

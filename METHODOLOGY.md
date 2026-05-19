@@ -157,3 +157,22 @@ Top hits:
 - Manual SQL LIVE flip → no audit trail, no rollback
 - Sub-agent dispatch for 1-file edits → token waste
 - "trust me" sub-agent reports → always verify
+- **Vibecoding** (NL prompts without ratchet) → silent regression at moderate complexity (AP-14)
+- **Markdown wall-of-text** for substantive analyses → see `docs/patterns/structure-as-html.md` (AP-15)
+- **Framework-outsourced prompts** → debug by reverse-engineering templates (AP-16)
+- **Agent monolith** (>10 tools / >20 steps) → context overflow + focus loss (AP-17)
+
+## Foundational patterns (the 3 imported pillars)
+
+These 3 patterns extend the 7 stages with cross-cutting engineering rigor:
+
+| Pattern | Source | Role |
+|---|---|---|
+| [`docs/patterns/twelve-factor-agents.md`](docs/patterns/twelve-factor-agents.md) | Dex Horthy 12-Factor Agents | Engineering rigor of LLM stack — deterministic software with embedded LLM steps |
+| [`docs/patterns/complexity-ratchet.md`](docs/patterns/complexity-ratchet.md) | Garry Tan AI Ratchet | Quality-only-up via per-cycle test+doc+eval artifacts; 90% coverage threshold |
+| [`docs/patterns/structure-as-html.md`](docs/patterns/structure-as-html.md) | Karpathy HTML output | Presentation layer of report-tier outputs (analyses, retros, reviews) |
+
+These reinforce each other:
+- 12-Factor (Factor 2/3/8/10/12) → ownership of prompts / context / control flow / scope / state
+- Complexity Ratchet → each cycle ratchets quality up (tests + docs + evals)
+- Structure-as-HTML → ratchet's evidence (eval records, audit reports) lives in HTML format
