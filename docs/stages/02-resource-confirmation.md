@@ -3,6 +3,19 @@
 > **Goal**: Confirm every input the spec assumes is actually available.
 > **Anti-goal**: "Trust the docs" — assume resources work without smoke test.
 
+## Inputs (from S1)
+
+- Spec document with "Dependencies" section
+- List of external services / APIs / cloud accounts the spec mentions
+- Operator-availability window for sign-offs
+
+## Required outputs
+
+- Resource confirmation appendix in spec doc, OR separate
+  `docs/specs/<spec>-resources.md`
+- Pass/fail per resource category (see below)
+- Any FAIL → escalated to risk register or fix-before-S3
+
 ## Why this exists
 
 The most common failure mode in production sprints is starting S5 (develop)

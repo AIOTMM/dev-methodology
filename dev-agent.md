@@ -103,7 +103,8 @@ Local commits land on `main` only after:
 
 Push to `origin/main` only after the local commit + final test run.
 
-EC2/production deploy only after `origin/main` updated AND remote checks pass.
+Production deploy (EC2 / GCP / Vercel / wherever) only after `origin/main`
+updated AND remote checks pass.
 
 ---
 
@@ -197,10 +198,11 @@ EC2/production deploy only after `origin/main` updated AND remote checks pass.
 - Always specify `subagent_type` matching the task
 - For S6 rounds: `code-reviewer` or `general-purpose` with adversarial prompt
 
-### TaskCreate / TaskUpdate
+### TodoWrite (Claude Code) / equivalent
 
 - For multi-step work spanning ≥3 distinct actions
 - Mark in_progress when starting, completed when done — don't batch
+- Cursor / Codex: use main-thread checklist comment instead
 
 ---
 
@@ -228,12 +230,33 @@ EC2/production deploy only after `origin/main` updated AND remote checks pass.
 ## Reference
 
 - `METHODOLOGY.md` — 7-stage overview
+- `PREREQUISITES.md` — environment setup before using this methodology
+- `docs/GLOSSARY.md` — acronym + term definitions (HFV-EQUIV, META, ABC adapter, etc.)
 - `docs/stages/0[1-7]-*.md` — per-stage playbooks
 - `docs/patterns/` — reusable patterns (multi-session, gates, etc.)
 - `docs/lessons-learned/` — retros + ANTI-PATTERNS.md
 - `prompts/` — session-kickoff templates
 - `commands/` — slash command implementations
 - `examples/sprint-P-walkthrough.md` — real walkthrough
+
+## Default conventions (when project CLAUDE.md doesn't override)
+
+- Word cap per sub-agent round: 1500-3000 words (see `docs/patterns/adversarial-review-7-rounds.md`)
+- Conventional commits: `feat:` / `fix:` / `refactor:` / `test:` / `docs:` / `chore:`
+- Test runner placeholder `<test_runner>`: substitute per `PREREQUISITES.md`
+- Production-host placeholder: `<prod-host>` — your EC2 / cloud / staging
+
+## Sub-agent dispatch reference
+
+Claude Code:
+```
+Use the Agent tool with:
+  subagent_type: code-reviewer
+  prompt: <adversarial template from prompts/reviewer-prompt.md>
+  run_in_background: true (for parallel R4-R7)
+```
+
+Cursor / Codex: sequential prompts in main thread, no parallelism.
 
 ---
 

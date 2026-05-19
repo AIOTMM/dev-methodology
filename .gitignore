@@ -1,0 +1,18 @@
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local-only workspace
+/tmp/
+.cache/
+
+# Per-project customizations (not the methodology itself)
+*.local.md
+*.project.md
+
+# Bind-mount / generated output
+/output/
+/logs/

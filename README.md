@@ -13,6 +13,11 @@
 
 A drop-in development methodology you can copy into ANY non-trivial project to:
 
+> **Domain context**: The methodology was extracted from AIOT (a cryptocurrency
+> trading system) Sprint-P, but is project-agnostic. See
+> [`docs/GLOSSARY.md`](docs/GLOSSARY.md) for term translations and
+> [`PREREQUISITES.md`](PREREQUISITES.md) for environment setup.
+
 1. **Define a spec rigorously** (not "vibe code")
 2. **Confirm production resources** before code is written
 3. **Brainstorm with adversarial alternatives** (not consensus-first)
