@@ -1,0 +1,54 @@
+name: Task
+description: Implementation work unit within an active sprint
+title: "[TASK] "
+labels: []
+body:
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: Sprint, triggering commit/incident, backlog reference
+      placeholder: |
+        - Sprint: v15.5-Path-B
+        - Triggered by: QA-R4 audit f2f6329
+        - Backlog: docs/sprints/v15.6-sprint-q-backlog.md item 13
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risk
+      placeholder: |
+        - What goes wrong if NOT done:
+        - Severity if shipped broken:
+        - Blast radius:
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Each criterion testable (regression test path noted)
+    validations:
+      required: true
+  - type: input
+    id: effort
+    attributes:
+      label: Effort estimate
+      placeholder: ~3h
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: Owner (specific name or session)
+    validations:
+      required: true
+  - type: input
+    id: blocked-by
+    attributes:
+      label: Blocked by (issue numbers)
+  - type: input
+    id: cross-refs
+    attributes:
+      label: Cross-references (META, related issues, spec)

@@ -1,0 +1,54 @@
+name: META tracking
+description: Single source of truth for a sprint (pinned)
+title: "[META] <sprint-name> tracking dashboard"
+labels: ["documentation", "type-spec", "p1"]
+body:
+  - type: input
+    id: head
+    attributes:
+      label: Sprint HEAD commit
+    validations:
+      required: true
+  - type: input
+    id: tests
+    attributes:
+      label: Test count (passing)
+    validations:
+      required: true
+  - type: input
+    id: project
+    attributes:
+      label: Project board URL
+    validations:
+      required: true
+  - type: textarea
+    id: operational
+    attributes:
+      label: 🚦 Operational (sequential)
+      placeholder: |
+        - [ ] #N OP-1 ...
+    validations:
+      required: true
+  - type: textarea
+    id: p1-blockers
+    attributes:
+      label: 🔴 P1 pre-LIVE blockers
+  - type: textarea
+    id: p2
+    attributes:
+      label: 🟡 P2 sprint
+  - type: textarea
+    id: p3
+    attributes:
+      label: 🟢 P3 polish
+  - type: textarea
+    id: gating
+    attributes:
+      label: 🎯 Gating contract for LIVE flip
+    validations:
+      required: true
+  - type: textarea
+    id: refs
+    attributes:
+      label: 📚 References
+      placeholder: CHANGELOG / runbook / spec / prior META

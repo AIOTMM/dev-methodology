@@ -1,0 +1,50 @@
+name: Spec
+description: Define a new feature scope before any implementation
+title: "[SPEC] "
+labels: ["type-spec", "p2"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why does this exist? What triggered it?
+    validations:
+      required: true
+  - type: input
+    id: goal
+    attributes:
+      label: Goal (single sentence)
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals (3-5 bullets)
+      description: What's explicitly OUT of scope
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria (numbered, testable)
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Top 3-5 risks with mitigation
+    validations:
+      required: true
+  - type: input
+    id: effort
+    attributes:
+      label: Effort estimate (range)
+      placeholder: "8-11h, 70% confidence"
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies (specs / tickets / resources)
+    validations:
+      required: false
