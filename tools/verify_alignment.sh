@@ -1,16 +1,9 @@
 #!/usr/bin/env bash
 # verify_alignment.sh — cross-check methodology repo internal consistency
 #
-# Runs as PR gate. Exits 0 on clean, 1 on drift.
-#
-# Checks:
-#   1. Every docs/stages/0[1-7]-*.md exists
-#   2. Every command in commands/ has 7 required sections
-#   3. Every pattern referenced in stages exists in docs/patterns/
-#   4. METHODOLOGY.md links to existing stage files
-#   5. README.md links to existing entry points
+# Portable: works on macOS Bash 3.2 + Linux. No mapfile, no pipe-to-while.
 
-set -euo pipefail
+set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
@@ -20,8 +13,8 @@ FAIL=0
 echo "=== Check 1: 7 stage files exist ==="
 for n in 1 2 3 4 5 6 7; do
   pattern="docs/stages/0${n}-*.md"
-  count=$(ls $pattern 2>/dev/null | wc -l)
-  if [[ $count -eq 1 ]]; then
+  count=$(ls $pattern 2>/dev/null | wc -l | tr -d ' ')
+  if [[ "$count" -eq 1 ]]; then
     echo "  ✓ $(ls $pattern)"
   else
     echo "  ✗ MISSING or DUPLICATE: $pattern (found $count)"
@@ -31,62 +24,74 @@ done
 
 echo ""
 echo "=== Check 2: commands have 7 required sections ==="
-REQUIRED_SECTIONS=(
-  "When to invoke"
-  "When NOT to invoke"
-  "Preconditions"
-  "Execution"
-  "NEVER constraints"
-  "Resume protocol"
-  "Acceptance"
-)
+SECTIONS="When to invoke
+When NOT to invoke
+Preconditions
+Execution
+NEVER constraints
+Resume protocol
+Acceptance"
 for cmd in commands/[A-Z]*.md commands/sprint-*.md; do
   [[ -f "$cmd" ]] || continue
-  # Skip index/readme files; only check actual commands
   [[ "$(basename "$cmd")" == "README.md" ]] && continue
-  for section in "${REQUIRED_SECTIONS[@]}"; do
+  while IFS= read -r section; do
+    [[ -z "$section" ]] && continue
     if ! grep -q "$section" "$cmd"; then
       echo "  ✗ $cmd missing section: $section"
       FAIL=1
     fi
-  done
+  done <<< "$SECTIONS"
 done
 echo "  ✓ command structure checked"
 
 echo ""
 echo "=== Check 3: stages reference existing patterns ==="
+REFS_TMP=$(mktemp)
+trap "rm -f $REFS_TMP" EXIT
 for stage in docs/stages/*.md; do
-  grep -oE 'docs/patterns/[a-z0-9-]+\.md' "$stage" | sort -u | while read ref; do
-    if [[ ! -f "$REPO_ROOT/$ref" ]]; then
-      echo "  ✗ $stage references missing: $ref"
-      FAIL=1
-    fi
-  done
-done
+  grep -oE 'docs/patterns/[a-z0-9-]+\.md' "$stage" 2>/dev/null | sort -u | \
+    while IFS= read -r ref; do echo "$stage|$ref"; done
+done > "$REFS_TMP"
+while IFS='|' read -r stage ref; do
+  [[ -z "$ref" ]] && continue
+  if [[ ! -f "$REPO_ROOT/$ref" ]]; then
+    echo "  ✗ $stage references missing: $ref"
+    FAIL=1
+  fi
+done < "$REFS_TMP"
 echo "  ✓ pattern references checked"
 
 echo ""
 echo "=== Check 4: METHODOLOGY.md links resolve ==="
-grep -oE '\[.*\]\(docs/[^)]+\)' METHODOLOGY.md | sed 's/.*(\(.*\))/\1/' | while read link; do
+LINKS_TMP=$(mktemp)
+grep -oE '\[.*\]\(docs/[^)]+\)' METHODOLOGY.md 2>/dev/null | sed 's/.*(\(.*\))/\1/' > "$LINKS_TMP"
+while IFS= read -r link; do
+  [[ -z "$link" ]] && continue
   if [[ ! -f "$REPO_ROOT/$link" ]]; then
     echo "  ✗ METHODOLOGY.md broken link: $link"
     FAIL=1
   fi
-done
+done < "$LINKS_TMP"
+rm -f "$LINKS_TMP"
 echo "  ✓ METHODOLOGY.md links checked"
 
 echo ""
 echo "=== Check 5: README.md entry points exist ==="
-grep -oE 'docs/[^ )]+\.md' README.md | sort -u | while read path; do
+RLINKS_TMP=$(mktemp)
+grep -oE 'docs/[^ )*`]+\.md' README.md 2>/dev/null | \
+  grep -v '\*' | grep -v '^docs/stages/0[NX]' | sort -u > "$RLINKS_TMP"
+while IFS= read -r path; do
+  [[ -z "$path" ]] && continue
   if [[ ! -f "$REPO_ROOT/$path" ]]; then
     echo "  ✗ README.md broken ref: $path"
     FAIL=1
   fi
-done
+done < "$RLINKS_TMP"
+rm -f "$RLINKS_TMP"
 echo "  ✓ README.md refs checked"
 
 echo ""
-if [[ $FAIL -eq 0 ]]; then
+if [[ "$FAIL" -eq 0 ]]; then
   echo "✅ All alignment checks PASSED"
   exit 0
 else

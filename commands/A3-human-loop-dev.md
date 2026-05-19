@@ -143,7 +143,8 @@ For each round:
 
 ```bash
 # Dispatch code-reviewer sub-agent with adversarial prompt for that round
-# See docs/templates/review-round-prompt-template.md
+# Templates: docs/patterns/adversarial-review-7-rounds.md §"Sub-agent prompt templates"
+# Generic shell:   prompts/reviewer-prompt.md
 ```
 
 Each round must close before next opens. CRITICAL findings fix immediately

@@ -11,8 +11,9 @@ LIVE flip prep. Cross-repo (`AIOTMM/agent-5.2-binance-perp` + `AIOTMM/AIOT-MVP`)
 - 12 CRITICAL bugs found + fixed + regression-tested
 - 14 HIGH issues addressed
 - 18 audit findings deferred to v15.6 Sprint Q (each as GitHub issue)
-- 44 regression tests added (suite 701 → 772)
-- 5 sprint commits (R1=e501e38 → R5=fa1e052 → R6=e90beee → R7=1fa9066)
+- 71 regression tests added (suite 701 → 772; 44 of these were QA-round-tagged)
+- 7 sprint commits (one per round: R1=e501e38, R2=12cbece, R3=3b64960,
+  R4=f2f6329, R5=fa1e052, R6=e90beee, R7=1fa9066)
 - 23 GitHub issues + 2 milestones + 1 META + 1 Project (Strategies side)
 - 22 mirror GitHub issues + 3 milestones + 1 META (OB-Dev side)
 - 45 items cross-repo Project board

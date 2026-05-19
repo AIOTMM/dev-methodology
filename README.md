@@ -52,7 +52,7 @@ commands (`commands/`) you can copy-paste into Claude Code / Cursor / Codex.
 - **Starting a project**: copy `prompts/spec-kickoff-prompt.md` to your session
 - **Mid-sprint**: jump to `docs/stages/0X-*.md` matching your current stage
 - **Stuck cross-session**: read `docs/patterns/multi-session-coordination.md`
-- **Need to review work**: `commands/review-round.md`
+- **Need to review work**: `commands/A1-continue-dev.md` (single round) or `docs/patterns/adversarial-review-7-rounds.md` (full doctrine)
 - **Lessons learned**: `docs/lessons-learned/2026-05-19-sprint-P-QA-R1-R7.md`
 
 ## Repo structure
