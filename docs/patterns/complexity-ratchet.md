@@ -156,6 +156,18 @@ The methodology's `/A1` per-step sub-agent review IS the ratchet's S5
 instance. The 7-round S6 IS the ratchet's verification layer. Without these,
 AI-assisted development is vibecoding.
 
+## Integration with Structure-as-HTML
+
+The ratchet's 3rd artifact (eval records / quality thresholds) lives most
+effectively as HTML (see `docs/patterns/structure-as-html.md`):
+
+- Coverage report → HTML with severity color (red < 70 / yellow 70-89 / green ≥ 90)
+- Mutation score → HTML table with per-module breakdown
+- Quality trend over commits → inline SVG chart in HTML
+- 12-week roadmap progress → HTML dashboard with sticky TOC
+
+Markdown coverage reports get ignored. HTML coverage reports get reviewed.
+
 ## Integration with 12-Factor Agents
 
 The complexity ratchet pairs with 12-factor agents (see

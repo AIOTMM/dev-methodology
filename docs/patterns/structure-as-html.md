@@ -158,6 +158,17 @@ def html_report(prompt_body: str, level: int = 3) -> str:
     return html.removeprefix("```html").removesuffix("```")
 ```
 
+## Connection to Complexity Ratchet
+
+HTML output IS the natural home for the ratchet's eval-record artifact
+(see `docs/patterns/complexity-ratchet.md`):
+
+- Mutation scores → HTML table with severity-color cells
+- Coverage trend → HTML chart (inline SVG, no CDN)
+- Per-cycle test+doc+eval audit → HTML report with collapsed `<details>`
+
+This makes HTML output the **evidence layer of the ratchet**.
+
 ## Connection to 12-Factor Agents
 
 Karpathy's chapter 07 explicitly maps HTML output to Dex Horthy's

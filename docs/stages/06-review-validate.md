@@ -151,9 +151,10 @@ If after R7 the code still feels wrong:
 - OR an unstated requirement (return to S3 brainstorm)
 - NEVER add R8 unless it's a new dimension (not "more of R5")
 
-## Coverage + mutation gate (v1.3 ratchet integration)
+## Coverage + mutation gate — Complexity Ratchet integration
 
-In addition to round-by-round adversarial findings, S6 enforces:
+In addition to round-by-round adversarial findings, S6 enforces the
+Complexity Ratchet pattern (see `docs/patterns/complexity-ratchet.md`):
 
 - **Aggregate-weighted coverage**:
   - Payment / financial paths: 95-100%
@@ -168,7 +169,7 @@ In addition to round-by-round adversarial findings, S6 enforces:
 
 R5 (persistence) and R6 (integration seams) particularly enforce these.
 
-## R7 ship audit format (v1.3 HTML integration)
+## R7 ship audit format — Structure-as-HTML integration
 
 R7 final ship audit reports should output as HTML (Level 3 with severity
 color-coding) per `docs/patterns/structure-as-html.md`. Markdown still OK
