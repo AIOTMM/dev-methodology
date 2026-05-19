@@ -143,6 +143,107 @@ AIOT v15.5 + Sprint-P used HTML output for:
 
 Result: operator review time dropped ~60% vs equivalent markdown-only.
 
+## Input/Output asymmetry (Karpathy ch01 deep)
+
+The deeper Karpathy thesis (chapter 01 verbatim):
+
+> "LLM's input side runs in 21st century (multimodal, vision, voice, video).
+> Output side stuck in 1991 plain-text email. **This input/output dimensional
+> mismatch is current AI applications' biggest hidden waste.**"
+
+3-year evolution table:
+
+| Year | Input upgrade | Output state |
+|---|---|---|
+| 2023 | text prompt | text / markdown |
+| 2024 | image / PDF / Word | text / markdown |
+| 2025 | realtime voice + video | text / markdown |
+| 2026 | multimodal interleaved | **text / markdown (still!)** |
+
+Input took 5 leaps, output zero. HTML closes one leap.
+
+## Walls-of-Text cost (Karpathy ch01)
+
+When LLM gives wall-of-text, 4 tasks pushed onto reader's working memory:
+
+1. Segmentation — splitting prose into meaning chunks
+2. Priority reordering — which is conclusion vs support
+3. Mental map building — relationships between sections
+4. Structure recall — remembering top of doc when scrolling
+
+> "These 4 tasks should be done by presentation layer, but instead pushed
+> to the reader's working memory. Reading long LLM answers feels 'tiring'
+> because your brain is doing layout-engine work."
+
+HTML moves these 4 tasks back to the presentation layer where they belong.
+
+## 9 prompt templates (Karpathy ch04)
+
+For 7 use-cases + 2 advanced, full templates exist in
+`karpathy-structure-as-html-zh/content/04-template-library.md`. Summary:
+
+| # | Template | Hotkey suggestion |
+|---|---|---|
+| 1 | Generic "+HTML" | `;html` |
+| 2 | "Make it beautiful" | `;htmlbeauty` |
+| 3 | Plan doc (Phases / Risks / Timeline / DoD) | `;htmlplan` |
+| 4 | Analysis report (Executive summary / Findings / Recs) | `;htmlreport` |
+| 5 | Wiki entry (Sticky TOC / Sections / Cross-links) | `;htmlwiki` |
+| 6 | Dashboard (KPI cards / Charts / Sortable tables) | `;htmldash` |
+| 7 | Tutorial (Steps / Copy code / Common mistakes) | `;htmltutorial` |
+| 8 | Cheatsheet (3-col grid / Color-coded / Print-optimized) | `;htmlcheat` |
+| 9 | Code review (Severity / Diff / Suggested fix) | `;htmlreview` |
+| 10 | Interactive dashboard (Tabs / Filters / Export CSV) | `;htmlinteractive` |
+| 11 | Learning roadmap (Checkbox state in localStorage) | `;htmlroadmap` |
+
+Store as Raycast / Alfred snippets. Append-after-question workflow:
+**5 sec overhead, 10× output value**.
+
+## 6 inline JS interactivity patterns (Karpathy ch06)
+
+Cap at < 100 lines inline JS total. Beyond → switch to real framework.
+
+| Pattern | Lines | Use |
+|---|---|---|
+| `<details><summary>` collapse | 0 JS | Progressive disclosure |
+| Tabs (data-tab attr + classList) | ~30 JS | Multi-section navigation |
+| Table sort (parseFloat + localeCompare) | ~40 JS | Sortable data tables |
+| Search filter (input → tr.hidden) | ~20 JS | Live table filtering |
+| Copy button (clipboard.writeText) | ~15 JS | Copy code snippets |
+| localStorage checkbox persistence | ~25 JS | Cross-session state |
+
+## Print optimization (Karpathy ch06)
+
+```css
+@media print {
+  body { max-width: none; background: white; color: black; }
+  .card, table, pre { break-inside: avoid; }
+  .copy-btn, .search-input, nav.tabs { display: none; }
+  details[open] summary { margin-bottom: 0; }
+  a[href]:after { content: " (" attr(href) ")"; font-size: 0.85em; }
+  @page { size: A4; margin: 1.5cm; }
+}
+```
+
+## CSS investment > JS investment (Karpathy ch06 心法 2)
+
+Beautiful CSS (color / spacing / typography / transitions) delivers
+more reader value than equivalent-token JS interaction.
+**Invest in CSS first; consider JS second**.
+
+## HTML / CSS cheatsheet anchors (Karpathy appendix)
+
+For prompt engineering style block:
+
+| Topic | Reference snippet |
+|---|---|
+| HTML5 boilerplate | `<!doctype html><html lang="zh-Hant">...` |
+| Cross-platform font stack | `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC"...` |
+| Dark mode via CSS variables | `:root { --bg: #fff; } @media (prefers-color-scheme: dark) { :root { --bg: #1a1a1a; } }` |
+| Callout boxes (info/success/warning/danger) | `border-left: 4px solid; padding: 1em 1.5em;` |
+| Sticky table headers | `thead { position: sticky; top: 0; }` |
+| Code/pre styling | `font-family: ui-monospace, Menlo; background: var(--code-bg);` |
+
 ## Operator-side automation snippet
 
 For repeated reports, save Level 2-3 prompt as Raycast snippet OR build

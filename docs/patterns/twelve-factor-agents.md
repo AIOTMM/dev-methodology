@@ -167,6 +167,201 @@ Properties:
 | 11 (Trigger anywhere) | Same `/A1` command works from new session, resume, post-compact, post-merge |
 | **12 (Stateless reducer)** | **META + Project + commit chain = thread; agent is pure function over it** |
 
+## Brief history of software (ch00 deep)
+
+60 years of software was always **directed graphs (DAG)** of operations.
+Agent's promise: let LLM decide edges at runtime. Reality: pure-loop agents
+**hit a wall at ~10-20 turns** as context bloats and LLM "gets lost".
+
+### Why pure-loop agents break
+
+> "Even with longer context windows, you always get better results with
+> shorter, focused prompts and context."
+
+Practical resolution: **sprinkle micro-agents into a larger deterministic
+DAG**. Each micro-agent stays ≤ 10 steps, LLM owns interpretation of
+free-form human input within a well-scoped task.
+
+### Minimum agent loop (4 steps)
+
+```python
+initial_event = {"message": "..."}
+context = [initial_event]
+while True:
+  next_step = await llm.determine_next_step(context)
+  context.append(next_step)
+  if next_step.intent == "done":
+    return next_step.final_answer
+  result = await execute_step(next_step)
+  context.append(result)
+```
+
+Each line maps to a factor:
+- `initial_event` → Factor 11 (trigger from anywhere)
+- `context = [...]` → Factor 3 (own your context)
+- `llm.determine_next_step(...)` → Factor 1 + 4 (NL → structured outputs)
+- `if next_step.intent == "done"` → Factor 8 (own your control flow)
+- `context.append(result)` → Factor 5 + 9 (unify state + compact errors)
+
+## Factor 1 deep: the first-token high-stakes choice
+
+Every LLM call: the FIRST TOKEN decides natural-text vs structured JSON.
+Once it commits, it's irreversible.
+
+> "Forcing LLM to always output JSON—even 'I want to ask the human' as a
+> `request_human_input` tool intent—gives you more control. You may not
+> get a quality boost but you preserve your freedom to try weird stuff
+> (reinforcing Factor 2 ownership)."
+
+## Factor 5 deep: unify execution + business state
+
+| Type | Examples |
+|---|---|
+| **Execution state** | current step, next step, retry count, waiting, timers |
+| **Business state** | messages, tool calls, tool results, human responses |
+
+Most agent frameworks separate these. **For agents, this is overkill** —
+execution state is metadata derivable from business state:
+
+```
+current_step = thread.events[-1].type
+waiting_on   = thread.events[-1].type == 'request_human_input'
+retry_count  = count(events, type='error') for current action
+```
+
+7 benefits of unification: Simplicity / Serialization / Debug / Flexibility /
+Recovery / Forking / Human Interface.
+
+**Exception** — DON'T put in context: session IDs, API tokens, passwords,
+internal user IDs, large blobs. Keep these as session-metadata with
+reference IDs.
+
+## Factor 6 deep: 4 verbs (Launch / Query / Pause / Resume)
+
+Agents are programs. Programs need:
+
+| Verb | Unix | Web service |
+|---|---|---|
+| Launch | `./myprog` | `POST /process` |
+| Query | `ps`, `top` | `GET /process/:id` |
+| Pause | `kill -STOP` | (hard) |
+| Resume | `kill -CONT` | (hard — webhook + state restore) |
+
+Most framework miss the last 3. **Key capability**: pause AT THE INSTANT
+between "LLM picks tool" and "tool executes". This requires Factor 5 (state
+serializable) + Factor 8 (control flow owned) + Factor 7 (human contact
+via tool).
+
+## Factor 7 deep: human as tool intent
+
+Concrete shape:
+
+```python
+class RequestHumanInput:
+  intent: "request_human_input"
+  question: str
+  context: str
+  urgency: Literal["low", "medium", "high"]   # high → SMS, low → email
+  format: Literal["free_text", "yes_no", "multiple_choice"]
+  channel: Literal["slack", "email", "sms"]    # multi-channel
+  choices: List[str]                            # for multiple_choice
+```
+
+Loop handles it:
+
+```python
+if next_step.intent == 'request_human_input':
+  thread.events.append({'type': 'human_input_requested', 'data': next_step})
+  thread_id = await save_state(thread)
+  await notify_human(next_step, thread_id)
+  return  # exit loop, await webhook
+```
+
+Webhook resumes:
+
+```python
+@app.post('/webhook')
+def webhook(req: Request):
+  thread_id = req.body.threadId
+  thread = await load_state(thread_id)
+  thread.events.push({'type': 'response_from_human', 'data': req.body})
+  # continue agent loop
+```
+
+## Factor 9 deep: error self-healing
+
+Key insight: agents differ from traditional retry because LLM **changes
+strategy** after seeing error (vs blind retry waiting for transient error
+to clear).
+
+```python
+try:
+  result = await handle_next_step(thread, next_step)
+  thread['events'].append({'type': next_step.intent + '_result', 'data': result})
+  consecutive_errors = 0
+except Exception as e:
+  consecutive_errors += 1
+  if consecutive_errors < 3:
+    thread['events'].append({'type': 'error', 'data': format_error(e)})
+    # loop and retry with LLM-different-strategy
+  else:
+    # escalate to human (Factor 7) or compress context for fresh start
+    break
+```
+
+3 consecutive errors → escalate. Common threshold.
+
+## Factor 11 deep: trigger from anywhere
+
+Agent should not be bound to one UI. **Meet users where they are**:
+
+| Direction | Channels |
+|---|---|
+| Trigger FROM | Slack / email / SMS / cron / webhook / GitHub event / another agent |
+| Reply TO | same multi-channel |
+
+Concrete endpoints:
+
+```
+POST /agents/start         ← dashboard
+POST /webhook/slack        ← Slack
+POST /webhook/email        ← SendGrid
+POST /webhook/sms          ← Twilio
+GET  /trigger/daily-9am    ← cron
+```
+
+Each endpoint: (1) parse source → unified `Event`, (2) build/load thread,
+(3) push event into agent loop.
+
+## Appendix 13: Pre-fetch known context
+
+**Optimization layer on top of all 12 factors**.
+
+Anti-pattern: let LLM decide `fetch_git_tags` every call.
+
+```python
+# Wasted LLM call — you ALREADY KNOW agent will need git_tags
+next_step = await llm.determine_next_step("...")
+# next_step.intent == 'list_git_tags'  (predictable!)
+tags = await fetch_git_tags()
+# Now LLM call AGAIN with tags in context...
+next_step_2 = await llm.determine_next_step("...with tags...")
+```
+
+Fix: pre-fetch at orchestrator level, skip the first LLM call:
+
+```python
+git_tags = await fetch_git_tags()  # known dependency, fetch ahead
+prompt = render_template(tags=git_tags, thread_events=thread.events)
+next_step = await llm.determine_next_step(prompt)
+```
+
+**1 LLM call saved per agent invocation. Compound savings at scale.**
+
+This is also why Factor 3 (own your context) is critical — pre-fetched
+data goes in YOUR custom-shaped context, not framework's default
+message-list.
+
 ## Anti-framework position (nuanced)
 
 NOT anti-framework — anti-blind-trust:

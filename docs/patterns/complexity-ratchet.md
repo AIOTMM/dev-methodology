@@ -138,6 +138,127 @@ test actually fail when the code is wrong?).
 Estimated cost: $35-45K for 12 weeks (AI tools + infra + human review).
 ROI: < 1 production incident's cost.
 
+## 3 canonical Garry case studies (ch04)
+
+Garry's article showcases 3 real cases. Each demonstrates the exact
+ratchet turn: **problem → add (test + doc + eval) → quality floor permanently rises one notch**.
+
+### Case 1: GBrain "Holder Confusion"
+
+- **System**: epistemological extraction across 28K pages
+- **Problem**: V1 misattributed claim-holder in 35% of cases (cross-model
+  eval scored 6.8/10)
+- **Ratchet response**:
+  - Tests: **17 contract tests**
+  - Documentation: **6 failure modes documented**
+  - Architecture: **weight rounding enforced at DB layer** (no fake 0.74
+    precision; must round to 0.05 increments)
+- **Effect**: "**The tests remember.**" Future extraction cannot ship below
+  6.8/10 baseline. Nobody needs to remember WHY weight rounding matters —
+  the tests enforce it.
+
+### Case 2: GStack "TTY Test Harness"
+
+- **System**: GStack interactive review skill
+- **Problem**: Claude Code occasionally **skipped entire interactive
+  conversation**, dumping findings + exiting. Defeats interactive design.
+- **Untestable challenge**: "How do you unit-test 'did the AI have a
+  conversation'?"
+- **Ratchet 3-layer response**:
+  - Layer 1: **STOP gates in skill prompt** (anti-rationalization
+    clauses, MUST-ask-before-next-section)
+  - Layer 2: **Anti-shortcut clause** ("Plan file is the OUTPUT of
+    review, not a SUBSTITUTE for it")
+  - Layer 3: **TTY harness test** — spawn Claude in pseudo-terminal,
+    watch real-time output, fail if no interactive question fired
+- **Effect**: Tests AGENT BEHAVIORAL CONTRACTS at the TTY level. Expands
+  testing's definition from "code behavior" to "agent behavior".
+
+### Case 3: OpenClaw Plugin E2E (PR #880)
+
+- **System**: GStack OpenClaw plugin ecosystem
+- **Problem**: how to test "plugin actually loads + runs" beyond compile?
+- **Ratchet response**: **359-line end-to-end test** spanning 2 separate processes:
+  1. Build plugin from source
+  2. Spawn isolated OpenClaw instance
+  3. Install plugin via CLI
+  4. Verify runtime load via `plugins inspect`
+  5. Set + validate config
+  6. Confirm `plugins doctor` shows 0 diagnostics
+- **Pattern**: "359 lines of test code. The kind of test humans almost
+  NEVER write because setup is too tedious. Claude wrote it in 5 minutes.
+  **That's the effort wall disappearing in real time.**"
+
+### What these 3 cases prove
+
+> "**Ratchet is not 'add more unit tests'.** It is 'for every lesson learned,
+> lock an executable check into the codebase'."
+
+Action for your repo: pull incident log → for each incident, write (test +
+doc + eval) trio. Next incident cannot be the same incident.
+
+## 8 AI-test-writer workflows (Garry ch06)
+
+| Workflow | Use case | AI strength |
+|---|---|---|
+| 1. Coverage gap → AI batch-generate | Push 65% → 90% | ⭐⭐⭐⭐⭐ |
+| 2. Bug-fix → regression test | Production incident → fix | ⭐⭐⭐⭐⭐ |
+| 3. PR diff coverage gate | Every PR must add tests for new lines | CI-enforced |
+| 4. AI catches fake tests | Code-review for `assert True` / mock-mock-pass | ⭐⭐⭐⭐ |
+| 5. Property-based discovery | LLM proposes invariants | ⭐⭐⭐⭐ |
+| 6. Mutation-driven test refinement | Mutmut score → AI patches failing tests | ⭐⭐⭐⭐ |
+| 7. Flake-investigation loop | Investigate + fix flaky tests | ⭐⭐⭐ |
+| 8. Test suite refactor | Reduce duplication, improve fixtures | ⭐⭐⭐⭐ |
+
+**Critical prompt addition** (anti-mirror-implementation):
+
+> "IMPORTANT: Write tests based on the docstring and intended behavior,
+> NOT by mirroring the implementation. If implementation has bugs, the
+> test should catch them."
+
+Without this prompt, AI generates tests that mirror buggy code → tests
+pass but actual behavior is wrong → false confidence.
+
+## Garry × Dex synthesis (ch09)
+
+| Concept | Owner | Side it covers |
+|---|---|---|
+| 12-factor agents | Dex Horthy | **Building** side — how to construct controllable LLM apps |
+| 90% test coverage | Garry Tan | **Verification** side — how to verify AI-produced software |
+
+Together: **production-grade AI application**.
+
+Garry quote (terminal insight):
+> "The companies that win the next 24 months won't be the ones with the
+> fastest agents... They'll be the ones with the **strongest guardrails**."
+
+12-factor = guardrail blueprint. 90% coverage = guardrail load-test.
+Both = real guardrail.
+
+### Organization 4-quadrant map
+
+```
+              ↑ 12-factor adoption
+              │
+   Type C     │     Type D ★ (target)
+   over-eng   │     production-ready
+   pretty arch│     arch + verification
+              │
+   ━━━━━━━━━━━┿━━━━━━━━━━→ 90% coverage
+              │
+   Type A     │     Type B
+   early-stage│     reactive QA
+   weak both  │     tests strong, agent loose
+              │
+              ↓
+```
+
+Most AI startups stuck Type A. Some big-co Type C (pretty architecture but
+no tests). Few mature Type B (tested but agent loose). Rare Type D (both).
+
+**Garry + Dex methodology = playbook to push organization to Type D from
+any starting quadrant**.
+
 ## How this ratchets dev-meth's existing stages
 
 | Stage | Pre-ratchet | Post-ratchet (this pattern) |
