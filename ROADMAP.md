@@ -71,7 +71,7 @@ Long-term exploration:
 
 ## Anti-amnesia anchors
 
-6 files = full bootstrap context:
+7 files = full bootstrap context:
 
 1. `README.md` — entry
 2. `METHODOLOGY.md` — 7-stage overview
@@ -79,6 +79,7 @@ Long-term exploration:
 4. `docs/adoption-guide.md` — apply to a project
 5. `examples/sprint-P-walkthrough.md` — real precedent
 6. `ROADMAP.md` (this file) + META #25 — current state
+7. `docs/SESSION-CONTEXT.md` — **AI session compact-survival anchor** (read FIRST when resuming after compact)
 
 Read those 6 = you know everything material. Anything not in them is in
 `docs/` subfolders by topic.
