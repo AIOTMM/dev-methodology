@@ -95,13 +95,26 @@ done
 python3 tools/generate_test_fixtures.py --dry-run
 ```
 
-### 6. Operator availability
+### 6. Operator availability + state
 
 For decisions requiring human-in-the-loop sign-off:
 
 - Confirm operator (named individual) reachable during sprint window
 - Confirm magic-phrase / decision file location
 - Confirm comm channel for escalation (Telegram / Slack / email)
+
+**Operator energy state** (vinsai_AI sprint precedent — see
+`docs/patterns/priority-scoring.md`):
+
+- Self-report or biometric (WHOOP `recovery_pct` ≥67% = GREEN /
+  34-66% = YELLOW / <34% = RED)
+- Match high-cognitive sprint work (S5 multi-system, S6 review) to
+  GREEN-zone hours
+- RED-zone hours: limit to S2 / S4 mechanical work or rest
+
+Resource availability includes operator state. Spec assuming
+"operator does 8h focused work" must check operator can actually
+deliver 8h, not just be reachable.
 
 ### 7. CPU / RAM / Network headroom
 

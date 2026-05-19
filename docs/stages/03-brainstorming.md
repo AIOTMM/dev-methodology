@@ -99,6 +99,28 @@ could fail in production. Sort by likelihood."
 
 If sub-agent finds something the operator didn't, that's S3 doing its job.
 
+## Pattern 4: 4-factor priority scoring for option pick
+
+When multiple options have similar surface appeal, apply the priority-scoring
+formula (see `docs/patterns/priority-scoring.md`):
+
+```
+score = 0.35*deadline + 0.25*energy_match + 0.25*EV + 0.15*dependency
+```
+
+Score each option 0.0-1.0 per factor. Pick highest weighted sum, OR operator
+override with logged rationale. Avoids "all options seem fine" deadlock.
+
+## Pattern 5: 4D AI Fluency check
+
+Before finalizing the decision (per `docs/patterns/4d-ai-fluency.md`):
+
+- **Delegation**: Does this option correctly split human vs AI work?
+- **Description**: Can the next session execute this from the decision-log
+  alone (no oral context required)?
+- **Discrimination**: What would falsify this pick? (set a re-eval trigger)
+- **Diligence**: Did I skip S2 / S3 steps to save time? Acknowledge if so.
+
 ## Skip conditions (when 1 option is OK)
 
 S3 may compress to "Option A only" if:

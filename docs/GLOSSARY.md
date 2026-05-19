@@ -44,6 +44,20 @@
 - **Sub-agent**: an isolated Claude session dispatched by parent for a
   scoped task (review / search / parallel implementation)
 
+## vinsai_AI life-optimization terms (cross-pollinated into methodology)
+
+- **WHOOP**: biometric wearable providing `recovery_pct` for energy-zone classification
+- **Energy zone**: GREEN (≥67% recovery) / YELLOW (34-66%) / RED (<34%) —
+  used by S2 resource confirmation + S3 priority scoring
+- **TDL**: To-Do List item with structured priority metadata (deadline, EV, dependency)
+- **Priority scoring formula**: 0.35·deadline + 0.25·energy + 0.25·EV + 0.15·dependency.
+  See `docs/patterns/priority-scoring.md`
+- **EV (Expected Value)**: probability-weighted reward minus cost; one of 4 scoring factors
+- **4D AI Fluency**: Delegation / Description / Discrimination / Diligence framework
+  for human-AI collaboration. See `docs/patterns/4d-ai-fluency.md`
+- **Daily cycle commands** (vinsai_AI precedent): `/morning` (state + priority top-K) /
+  `/meeting` (transcript → action items) / `/evening-review` (completion rate + tomorrow prep)
+
 ## Domain-specific (AIOT trading examples only — generalize when porting)
 
 - **AIOT**: a specific cryptocurrency token (the example domain)
