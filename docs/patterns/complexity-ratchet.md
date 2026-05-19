@@ -19,13 +19,51 @@ This eliminates the economic barrier to 90%+ coverage:
 
 Each AI coding session adds **3 forward-only artifacts** to the codebase:
 
-1. **Automated tests** — encode correctness as executable constraints
-2. **Documentation** — capture the WHY behind decisions, not just WHAT
-3. **Evaluation metrics** — quantify quality thresholds with comparative scoring
+1. **Automated tests** — encode what "correct" means as executable constraints
+2. **Documentation** — record WHY decisions were made (not just WHAT the code does)
+3. **Evaluation results** — establish quality thresholds with comparative scoring
 
 The next AI agent iteration **loads all three into context simultaneously**.
 The agent literally cannot regress below these baselines because they're
 embedded in its working environment.
+
+> **"The tests remember."** — Garry Tan. Nobody on the team needs to remember
+> WHY weight rounding matters (Holder Confusion case): the 17 contract tests
+> enforce it forever.
+
+## Tech debt vs Complexity Ratchet (CRITICAL distinction)
+
+These two concepts are OPPOSITES, not synonyms:
+
+| Dimension | Tech Debt | Complexity Ratchet |
+|---|---|---|
+| Direction | bad accumulates | good baseline accumulates |
+| Goal | minimize | maximize |
+| Reversibility | refactor to pay off | forward-only (this is a feature) |
+| Metaphor | bank interest | socket wrench |
+| Origin | shortcut under deadline pressure | normal dev produces it automatically |
+| Management | sprint budget for repayment | bake (test + doc + eval) into PR template |
+
+> "A ratchet is a mechanism that allows motion in one direction only. A
+> socket wrench turns a bolt forward and prevents it from turning back...
+> The quality floor goes up with every turn. Forward-only motion. That's
+> the ratchet."
+
+## "Everything harnessable is testable" (Garry ch01 extension)
+
+The ratchet is not limited to unit tests. **Anything observable becomes
+assertable becomes ratcheted**:
+
+| Layer | What to test | Example |
+|---|---|---|
+| OS | filesystem / cron / DB schema state | migration created table? cron fired? |
+| Terminal (TTY) | agent behavioral contracts | did Claude ask the interactive question? |
+| Browser | rendered output, form fill | does the page mount, does submit POST? |
+| API | request/response schema | does response match JSON Schema? |
+| Agent behavior | protocol compliance | does agent confirm before destructive ops? |
+
+This is what the **GStack TTY test harness** (Case 2 below) accomplishes:
+testing AGENT BEHAVIOR, not just code behavior.
 
 ## Verification bottleneck (the new constraint)
 

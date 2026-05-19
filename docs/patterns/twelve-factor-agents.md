@@ -150,6 +150,27 @@ Properties:
 - Every commit appends events (issue close, comment, sub-agent finding)
 - Coordinator never holds in-session state; reads META → acts → updates META
 
+### Haskell `foldl` analogy
+
+```haskell
+foldl :: (b -> a -> b) -> b -> [a] -> b
+foldl agent_reducer empty_thread [event_1, event_2, ...] = final_thread
+```
+
+5 FP properties inherited by agents:
+
+| Property | Meaning for agents |
+|---|---|
+| Pure | same input → same output (modulo LLM sampling) → reproducible, testable |
+| Composable | two agent reducers chain into pipeline |
+| Time-travelable | any thread snapshot can replay → debug superpower |
+| Parallelizable | stateless → N workers, N threads, zero interference |
+| Distributable | reducer can move between machines without state migration |
+
+Dex's terminal critique of OpenAI Assistants API: putting state behind
+a vendor server violates Factor 5 (unify state) AND Factor 12 (stateless
+reducer) simultaneously — you lose audit, fork, replay, and vendor freedom.
+
 ## How the 12 factors map to dev-meth artifacts
 
 | Factor | dev-meth artifact |
@@ -287,6 +308,71 @@ def webhook(req: Request):
   thread.events.push({'type': 'response_from_human', 'data': req.body})
   # continue agent loop
 ```
+
+## Factor 8 deep: 3 control flow patterns
+
+When you own `handle_next_step()`, each tool intent can have a DIFFERENT
+execution strategy. Three canonical patterns:
+
+| Intent | Mode | Behavior |
+|---|---|---|
+| `request_clarification` | **async / break** | LLM wants more info, break loop, await human webhook |
+| `fetch_open_issues` | **sync / continue** | Tool returns immediately, feed result back to LLM, `continue` loop |
+| `create_issue` | **async / break + approval** | High-stakes — break loop, request human approval, resume on `yes` |
+
+This is the essence of Factor 8: **same LLM, same thread, different
+tools each get their own execution strategy**. No framework can predict
+your business's classification — only you can write it.
+
+> "We need to be able to interrupt a running agent and resume later,
+> ESPECIALLY between 'tool selection' and 'tool invocation'." — Dex
+
+## Inner Loop vs Outer Loop (Factor 7 + 11 framework)
+
+The framing that makes enterprise AI agents valuable:
+
+| Mode | Who triggers | Who's "in charge" |
+|---|---|---|
+| **Inner Loop** | Human asks agent (ChatGPT mode) | Human |
+| **Outer Loop** | Cron / event / webhook triggers agent | Agent (proactively contacts humans when needed) |
+
+Outer-loop example (Humanlayer deploybot):
+
+```
+[Human] merges PR → main
+  ↓
+[Deterministic] deploys to staging, runs e2e tests
+  ↓
+[Agent] proposes `deploy_frontend_to_prod(SHA)`
+  ↓
+[Deterministic] requests human approval
+  ↓
+[Human] rejects: "deploy the backend first"
+  ↓
+[Agent] interprets human feedback → proposes `deploy_backend_to_prod`
+  ↓
+... (continues until done) ...
+```
+
+**LLM's only job**: interpret free-form human feedback ("can you deploy
+the backend first?") into the next structured tool call. ALL execution
+is deterministic. This is why micro-agents (5-10 step) work in
+production while monolithic agents (50 tools, ∞ steps) don't.
+
+## Factor 10 deep: edge-of-capability moat
+
+NotebookLM team's observation (cited by Dex):
+
+> "The most magical AI moments come when I'm really, really, really close
+> to the edge of the model's capability."
+
+**Operational implication**: find where the model JUST barely works on
+a focused task, and ship agents at that edge. Once it slips outside,
+split into two micro-agents.
+
+> "Wherever the edge is, **consistently hitting it is the moat**."
+
+This requires engineering discipline — not just "make agents bigger".
 
 ## Factor 9 deep: error self-healing
 
