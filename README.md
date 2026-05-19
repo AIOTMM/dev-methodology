@@ -48,6 +48,7 @@ commands (`commands/`) you can copy-paste into Claude Code / Cursor / Codex.
 
 ## Entry points
 
+- **Returning after a break**: read [`ROADMAP.md`](ROADMAP.md) or [META #25](https://github.com/AIOTMM/dev-methodology/issues/25)
 - **New to this**: read `METHODOLOGY.md` (15-min overview) → `dev-agent.md`
 - **Starting a project**: copy `prompts/spec-kickoff-prompt.md` to your session
 - **Mid-sprint**: jump to `docs/stages/0X-*.md` matching your current stage
