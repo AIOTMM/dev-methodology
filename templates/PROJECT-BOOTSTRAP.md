@@ -70,16 +70,82 @@ Hybrid pulls the **execution discipline** from superpowers and the
 
 R7 ship audit 必用 7-round adversarial review pattern（不單跑 codex）。
 
-## 狀態載體：GitHub issues（anti-amnesia 主軸，絕不省略）
+## 狀態載體：GitHub Projects + Issues 完整工作流（anti-amnesia 主軸）
 
-- 每個 sprint 開一個 META issue（用 dev-meth 的 meta-tracking 模板）。
-  META body 就是「the thread」（Factor 5 統一狀態）。
-- 每個 task 一個 sub-issue（用 task.yml 模板），close 即完成。
-- design spec 與 plan 寫進 docs/superpowers/{specs,plans}/，並在 META 內 link。
-- 每次 commit message 引用 issue #N（commit chain = event log，Factor 12）。
-- 跨 session 接手：先讀 META 全文 + 最新 5 個 commit + 對應 plan 檔，
-  再做任何動作。
-- 觸發 compact 之前必更新 META 的 event log section。
+完整規範見：
+**/Users/laijack/Documents/dev-methodology/docs/stages/04-ticket-creation.md**
+
+新 sprint 開工必備 7 件套（順序不可顛倒）：
+
+1. **GitHub Project (cross-repo board)** — `gh project create`，列 To-Do /
+   In-Progress / Blocked / Done 四欄。多 repo sprint 必用 Project，單 repo 也建議。
+2. **Milestones (≥2)** — 最少 PRE-LIVE gate + LIVE flip，視需要再加 post-LIVE 跟蹤。
+3. **Labels** — 4 軸最少各 1 個：priority (p0/p1/p2/p3) · origin (sprint-<name>) ·
+   type (spec/feat/fix/refactor/docs/test) · area (backend/frontend/infra/data 等)。
+4. **META tracking issue** — 用 `.github/ISSUE_TEMPLATE/meta-tracking.yml`
+   開，pinned。Body = sprint 唯一狀態源（Factor 5 統一狀態）。
+5. **Per-work-unit issues** — 用 `task.yml` 模板，每張票 body 必含：Source /
+   Risk / Acceptance / Effort / Owner / Blocked-by-Blocks / Cross-references。
+6. **Spec issues** — 用 `spec.yml` 模板，spec docs 寫 `docs/superpowers/specs/`
+   並在 spec issue body link 過去。
+7. **Plan files** — `docs/superpowers/plans/<file>.md`，META 與相關 task issue
+   都要 link 過去。
+
+### PR + commit convention（dev-meth 也缺，bootstrap 一次補齊）
+
+- Commit message 第一行：`<type>: <subject> (refs #N)` 或 `(closes #N)`。
+  type ∈ `feat / fix / refactor / docs / test / chore / perf / ci`（符合
+  conventional commits）。
+- PR title：`<type>(<scope>): <subject>` — 例：`feat(auth): add OAuth2 PKCE flow`
+- PR body 必含：
+  - `## Summary` — 1-3 句
+  - `## Related issues` — `Closes #N`（自動關 issue）/ `Refs #M`（單純引用）/
+    `Blocks #K`（dependency 標示）
+  - `## Test plan` — checklist
+  - `## Risk` — 上線後最可能壞掉的點 + 偵測路徑
+- 高風險 PR 額外標 label `risk-high` + 在 PR 內 `@mention` operator。
+- merge 一律 `Squash and merge`，message 用 conventional 第一行。
+
+### 跨 session / compact 接手流程（按順序）
+
+```bash
+# 1. 讀 META（the thread）
+gh issue view <META_NUM> --json title,body,state -q .body | head -300
+
+# 2. 讀 Project 看 In-Progress 狀態
+gh project item-list <PROJ_NUM> --owner <OWNER> --limit 30
+
+# 3. 讀最新 5 個 commit
+git log --oneline -5
+
+# 4. 讀對應 plan 檔
+ls -t docs/superpowers/plans/ | head -3
+cat docs/superpowers/plans/<latest>.md
+
+# 5. 讀任何 in-progress 票的 sub-issue
+gh issue view <N> --json body,comments
+```
+
+### Compact 前必做（絕不省略）
+
+- 把 session 進展 append 到 META body 的 `## Event log` 區段
+  （Factor 12: commit chain = event log；event log = 文字版的 commit chain）
+- 在 META 標清楚 "next action when resumed: <action>"
+- 把 design/plan 檔最後一次 commit 推上（不要留在本地）
+
+### 跨 repo sprint
+
+如果 sprint 跨 2+ repo（譬如 backend repo + infra repo），
+讀 **/Users/laijack/Documents/dev-methodology/docs/patterns/dual-repo-sync.md**
++ **/Users/laijack/Documents/dev-methodology/docs/patterns/multi-session-coordination.md**。
+
+### Sprint 收尾（S6 完成後）
+
+- 寫 retro 到 `docs/sprints/<YYYY-MM-DD>-<sprint>-retro.md`（dev-meth
+  `docs/lessons-learned/2026-05-19-sprint-P-QA-R1-R7.md` 是好範本）
+- 更新 CHANGELOG.md（如有）
+- 關 META issue（comment 寫 retro link + final HEAD）
+- Archive Project（不要 delete）
 
 ## Domain context（已在記憶體，不用每次重貼）
 
