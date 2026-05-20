@@ -47,6 +47,14 @@ The 7-stage waterfall is extended with these cross-cutting engineering patterns:
 - **[Complexity Ratchet](docs/patterns/complexity-ratchet.md)** (Garry Tan 2026) — quality compounds via per-cycle tests + docs + evals
 - **[Structure-as-HTML](docs/patterns/structure-as-html.md)** (Karpathy 2025) — presentation layer for substantive outputs
 
+## Quick start: bootstrap a new Claude Code session
+
+For new dev sessions that want the full dev-meth + superpowers hybrid pipeline:
+
+→ **[`templates/PROJECT-BOOTSTRAP.md`](templates/PROJECT-BOOTSTRAP.md)** — canonical bootstrap prompt + install script.
+
+Paste the "Bootstrap prompt" section verbatim into the first message of a new session. Run the one-time install script to wire dev-meth's `/sprint-kickoff /A1 /A2 /A3 /MP` slash commands into `~/.claude/commands/`.
+
 ## When NOT to use this
 
 - ❌ Single-file scripts (< 200 lines total project)
